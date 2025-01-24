@@ -54,6 +54,10 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+  },
   define: { 'process.env': {} },
   resolve: {
     alias: {
