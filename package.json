@@ -1,6 +1,7 @@
 {
   "name": "vuexify",
   "private": true,
+  "homepage": "https://reyhanfadillah.tech/vuexify",
   "type": "module",
   "version": "0.0.0",
   "scripts": {
