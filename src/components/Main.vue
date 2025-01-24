@@ -19,7 +19,7 @@
                 reprehenderit.</v-card-text>
               <v-card-actions class="gap-2">
                 <v-btn variant="elevated" color="primary">ACCEPT</v-btn>
-                <v-btn color="secondary">DECLINE</v-btn>
+                <v-btn color="error" variant="outlined">DECLINE</v-btn>
               </v-card-actions>
             </v-container>
           </v-card>
