@@ -10,17 +10,59 @@
     <div class="text-caption text-disabled" style="position: absolute; right: 16px;">
       &copy; 2016-{{ (new Date()).getFullYear() }} <span class="d-none d-sm-inline-block">Vuetify, LLC</span>
       —
-      <a class="text-decoration-none on-surface" href="https://vuetifyjs.com/about/licensing/" rel="noopener noreferrer"
-        target="_blank">
-        MIT License
+      <a class="text-decoration-none on-surface version-text font-bold" :href="repositoryReleasesUrl"
+        rel="noopener noreferrer" target="_blank">
+        v.{{ version }}
       </a>
     </div>
   </v-footer>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { useToggleTheme } from "@/composables/useToggleTheme";
+
 const { theme, toggleTheme } = useToggleTheme();
+
+// GitHub repository details
+const repositoryOwner = 'd4xwrld';
+const repositoryName = 'vuexify';
+const repositoryReleasesUrl = `https://github.com/${repositoryOwner}/${repositoryName}/releases`;
+
+// Reactive variable to store the version
+const version = ref('Loading...');
+
+const fetchLatestVersion = async () => { // <--TODO: Add tokenization to request using API Express JS -->>
+  try {
+    // Fetch all releases (including pre-releases)
+    const response = await fetch(`https://api.github.com/repos/${repositoryOwner}/${repositoryName}/releases`);
+
+    // Check if the response is OK
+    if (!response.ok) {
+      throw new Error(`Failed to fetch releases: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    // Check if there are any releases
+    if (data.length > 0) {
+      // Get the latest release (first item in the array)
+      const latestRelease = data[0];
+      version.value = latestRelease.name || latestRelease.tag_name; // Use the title (name) or fallback to tag_name
+    } else {
+      throw new Error('No releases found in the repository.');
+    }
+  } catch (error) {
+    console.error('Error fetching version:', error);
+    version.value = 'Unknown'; // Fallback to 'Unknown' if there's an error
+  }
+};
+
+// Fetch the version when the component is mounted
+onMounted(() => {
+  fetchLatestVersion();
+});
+
 const items = [
   {
     title: 'Vuetify Documentation',
@@ -52,10 +94,13 @@ const items = [
     icon: `mdi-reddit`,
     href: 'https://reddit.com/r/vuetifyjs',
   },
-]
+];
 </script>
 
 <style scoped lang="sass">
+  .version-text
+    color: rgb(25, 118, 210) !important
+
   .social-link :deep(.v-icon)
     color: rgba(var(--v-theme-on-background), var(--v-disabled-opacity))
     text-decoration: none
